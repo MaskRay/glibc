@@ -1,7 +1,11 @@
 /* Macros to support TLS testing in times of missing compiler support.  */
 
 #define COMMON_INT_DEF(x) \
-  asm (".tls_common " #x ",4,4")
+  asm (".section .tbss\n\t" \
+       ".globl " #x "\n\t" \
+       ".balign 4\n\t" \
+       #x ":\t.space 4\n\t" \
+       ".previous")
 /* XXX Until we get compiler support we don't need declarations.  */
 #define COMMON_INT_DECL(x)
 
