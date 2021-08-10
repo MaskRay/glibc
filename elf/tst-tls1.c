@@ -1,4 +1,5 @@
 /* glibc test for TLS in ld.so.  */
+#include <config.h>
 #include <stdio.h>
 
 #include "tls-macros.h"
@@ -39,7 +40,8 @@ do_test (void)
       result = 1;
     }
 
-
+  /* Clang and LLD do not support traditional GD/LD TLS on aarch64. */
+#if HAVE_TRAD_TLS
   /* Get variables using local dynamic model.  */
   fputs ("get sum of foo and bar (LD)", stdout);
   ap = TLS_LD (foo);
@@ -56,8 +58,9 @@ do_test (void)
       printf ("bar = %d\n", *bp);
       result = 1;
     }
+#endif
 
-
+#if HAVE_TRAD_TLS
   /* Get variables using generic dynamic model.  */
   fputs ("get sum of foo and bar (GD)", stdout);
   ap = TLS_GD (foo);
@@ -74,6 +77,7 @@ do_test (void)
       printf ("bar = %d\n", *bp);
       result = 1;
     }
+#endif
 
   return result;
 }

@@ -1,3 +1,4 @@
+#include <config.h>
 #include <stdio.h>
 
 #include "tls-macros.h"
@@ -9,9 +10,10 @@ COMMON_INT_DEF(foo);
 int
 in_dso (int n, int *caller_foop)
 {
-  int *foop;
   int result = 0;
 
+#if HAVE_TRAD_TLS
+  int *foop;
   puts ("foo");			/* Make sure PLT is used before macros.  */
   asm ("" ::: "memory");
 
@@ -29,6 +31,7 @@ in_dso (int n, int *caller_foop)
     }
 
   *foop = 16;
+#endif
 
   return result;
 }

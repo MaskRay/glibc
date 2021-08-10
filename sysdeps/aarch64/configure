@@ -332,3 +332,33 @@ if test $libc_cv_aarch64_sve_asm = yes; then
   $as_echo "#define HAVE_AARCH64_SVE_ASM 1" >>confdefs.h
 
 fi
+
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for -mtls-dialect=trad" >&5
+$as_echo_n "checking for -mtls-dialect=trad... " >&6; }
+if ${libc_cv_aarch64_trad_tls+:} false; then :
+  $as_echo_n "(cached) " >&6
+else
+  cat > conftest.c <<EOF
+extern __thread int i;
+void foo (void) { i = 10; }
+EOF
+  if { ac_try='${CC-cc} $CFLAGS $CPPFLAGS $LDFLAGS -fPIC
+                     -mtls-dialect=trad -shared -o conftest.so conftest.c'
+  { { eval echo "\"\$as_me\":${as_lineno-$LINENO}: \"$ac_try\""; } >&5
+  (eval $ac_try) 2>&5
+  ac_status=$?
+  $as_echo "$as_me:${as_lineno-$LINENO}: \$? = $ac_status" >&5
+  test $ac_status = 0; }; }
+  then
+    libc_cv_aarch64_trad_tls=yes
+  else
+    libc_cv_aarch64_trad_tls=no
+  fi
+  rm -f conftest*
+fi
+{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $libc_cv_aarch64_trad_tls" >&5
+$as_echo "$libc_cv_aarch64_trad_tls" >&6; }
+if test $libc_cv_aarch64_trad_tls = no; then
+  $as_echo "#define HAVE_TRAD_TLS 0" >>confdefs.h
+
+fi

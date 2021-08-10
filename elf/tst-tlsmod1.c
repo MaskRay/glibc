@@ -1,3 +1,4 @@
+#include <config.h>
 #include <stdio.h>
 
 #include "tls-macros.h"
@@ -14,7 +15,7 @@ int
 in_dso (void)
 {
   int result = 0;
-  int *ap, *bp, *cp;
+  int *ap, *bp;
 
   /* Get variables using initial exec model.  */
   fputs ("get sum of foo and bar (IE)", stdout);
@@ -34,7 +35,8 @@ in_dso (void)
       result = 1;
     }
 
-
+#if HAVE_TRAD_TLS
+  int *cp;
   /* Get variables using generic dynamic model.  */
   fputs ("get sum of foo and bar and baz (GD)", stdout);
   ap = TLS_GD (foo);
@@ -57,6 +59,7 @@ in_dso (void)
       printf ("baz = %d\n", *cp);
       result = 1;
     }
+#endif
 
   return result;
 }

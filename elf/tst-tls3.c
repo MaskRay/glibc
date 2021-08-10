@@ -1,4 +1,5 @@
 /* glibc test for TLS in ld.so.  */
+#include <config.h>
 #include <stdio.h>
 
 #include "tls-macros.h"
@@ -17,8 +18,7 @@ static int
 do_test (void)
 {
   int result = 0;
-  int *ap, *bp, *cp;
-
+  int *ap, *bp;
 
   /* Set the variable using the local exec model.  */
   puts ("set baz to 3 (LE)");
@@ -33,7 +33,8 @@ do_test (void)
   bp = TLS_IE (bar);
   *bp = 2;
 
-
+#if HAVE_TRAD_TLS
+  int *cp;
   /* Get variables using local dynamic model.  */
   fputs ("get sum of foo, bar (GD) and baz (LD)", stdout);
   ap = TLS_GD (foo);
@@ -56,7 +57,7 @@ do_test (void)
       printf ("baz = %d\n", *cp);
       result = 1;
     }
-
+#endif
 
   result |= in_dso ();
 

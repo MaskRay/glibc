@@ -1,3 +1,4 @@
+#include <config.h>
 #include <stdio.h>
 
 #include "tls-macros.h"
@@ -12,8 +13,10 @@ COMMON_INT_DEF(comm_n);
 int
 in_dso2 (void)
 {
-  int *foop;
   int result = 0;
+
+#if HAVE_TRAD_TLS
+  int *foop;
   static int n;
   int *np;
 
@@ -32,6 +35,7 @@ in_dso2 (void)
   result |= in_dso (*foop = 42 + n++, foop);
 
   *foop = 16;
+#endif
 
   return result;
 }

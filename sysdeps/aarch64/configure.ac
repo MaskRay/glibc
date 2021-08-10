@@ -105,3 +105,21 @@ rm -f conftest*])
 if test $libc_cv_aarch64_sve_asm = yes; then
   AC_DEFINE(HAVE_AARCH64_SVE_ASM)
 fi
+
+# Check if both CC and LD support traditional TLS GD/LD models.
+AC_CACHE_CHECK([for -mtls-dialect=trad], libc_cv_aarch64_trad_tls, [dnl
+cat > conftest.c <<EOF
+extern __thread int i;
+void foo (void) { i = 10; }
+EOF
+  if AC_TRY_COMMAND([${CC-cc} $CFLAGS $CPPFLAGS $LDFLAGS -fPIC
+                     -mtls-dialect=trad -shared -o conftest.so conftest.c])
+  then
+    libc_cv_aarch64_trad_tls=yes
+  else
+    libc_cv_aarch64_trad_tls=no
+  fi
+  rm -f conftest*])
+if test $libc_cv_aarch64_trad_tls = no; then
+  AC_DEFINE(HAVE_TRAD_TLS, 0)
+fi
