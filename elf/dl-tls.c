@@ -400,6 +400,15 @@ _dl_get_tls_static_info (size_t *sizep, size_t *alignp)
   *alignp = GLRO (dl_tls_static_align);
 }
 
+/* Get start and stop addresses of the static TLS block.  This
+   function will be used by Clang and GCC sanitizers.  */
+void
+__libc_get_static_tls_bounds (void **startp, void **endp)
+{
+  *startp = GLRO (dl_tls_static_start);
+  *endp = GLRO (dl_tls_static_start) + GLRO (dl_tls_static_size);
+}
+
 /* Derive the location of the pointer to the start of the original
    allocation (before alignment) from the pointer to the TCB.  */
 static inline void **
@@ -448,6 +457,8 @@ _dl_allocate_tls_storage (void)
   /* Clear the TCB data structure.  We can't ask the caller (i.e.
      libpthread) to do it, because we will initialize the DTV et al.  */
   memset (result, '\0', TLS_TCB_SIZE);
+
+  GLRO (dl_tls_static_start) = aligned;
 #elif TLS_DTV_AT_TP
   /* Pre-TCB and TCB come before the TLS blocks.  The layout computed
      in _dl_determine_tlsoffset assumes that the TCB is aligned to the
@@ -462,6 +473,8 @@ _dl_allocate_tls_storage (void)
      it.  We can't ask the caller (i.e. libpthread) to do it, because
      we will initialize the DTV et al.  */
   memset (result - TLS_PRE_TCB_SIZE, '\0', TLS_PRE_TCB_SIZE + TLS_TCB_SIZE);
+
+  GLRO (dl_tls_static_start) = result - TLS_PRE_TCB_SIZE;
 #endif
 
   /* Record the value of the original pointer for later

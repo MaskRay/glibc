@@ -609,6 +609,9 @@ struct rtld_global_ro
      binaries, don't honor for PIEs).  */
   EXTERN ElfW(Addr) _dl_use_load_bias;
 
+  /* Start of the static TLS block.  */
+  EXTERN void *_dl_tls_static_start;
+
   /* Size of the static TLS block.  */
   EXTERN size_t _dl_tls_static_size;
 
@@ -1228,6 +1231,9 @@ rtld_hidden_proto (_dl_allocate_tls)
 
 /* Get size and alignment requirements of the static TLS block.  */
 extern void _dl_get_tls_static_info (size_t *sizep, size_t *alignp);
+
+/* Get start and end addresses of the static TLS block.  */
+extern void __libc_get_static_tls_bounds (void **startp, void **endp);
 
 extern void _dl_allocate_static_tls (struct link_map *map) attribute_hidden;
 

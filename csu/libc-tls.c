@@ -46,6 +46,8 @@ bool _dl_tls_dtv_gaps;
 struct dtv_slotinfo_list *_dl_tls_dtv_slotinfo_list;
 /* Number of modules in the static TLS block.  */
 size_t _dl_tls_static_nelem;
+/* Start of the static TLS block.  */
+void *_dl_tls_static_start;
 /* Size of the static TLS block.  */
 size_t _dl_tls_static_size;
 /* Size actually allocated in the static TLS block.  */
