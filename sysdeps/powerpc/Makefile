@@ -9,10 +9,12 @@ sysdep_routines += dl-machine hwcapinfo
 # extra shared linker files to link only into dl-allobjs.so
 sysdep-rtld-routines += dl-machine hwcapinfo
 
+ifeq ($(have-tls-get-addr-optimize),yes)
 modules-names += mod-tlsopt-powerpc
 mod-tlsopt-powerpc.so-no-z-defs = yes
 tests += tst-tlsopt-powerpc
 $(objpfx)tst-tlsopt-powerpc: $(objpfx)mod-tlsopt-powerpc.so
+endif
 
 tests-static += tst-cache-ppc-static
 tests-internal += tst-cache-ppc-static
