@@ -245,6 +245,9 @@ __rtld_lock_define_initialized_recursive (, _dl_load_tls_lock)
 
 int _dl_clktck;
 
+#if __glibc_has_attribute (no_builtin)
+__attribute__ ((no_builtin("memset")))
+#endif
 void
 _dl_aux_init (ElfW(auxv_t) *av)
 {
