@@ -553,7 +553,7 @@ else
 # not for shared objects
 $(common-objpfx)shlib.lds: $(common-objpfx)config.make $(..)Makerules
 	$(LINK.o) -shared -Wl,-O1 \
-		  -nostdlib -nostartfiles \
+		  -nostdlib -nostartfiles -fuse-ld=bfd \
 		  $(sysdep-LDFLAGS) $(rtld-LDFLAGS) $(LDFLAGS.so) \
 		  -Wl,--verbose 2>/dev/null | \
 	  sed > $@T \
