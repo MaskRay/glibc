@@ -1451,10 +1451,11 @@ cannot enable executable stack as shared object requires");
 
   /* When we profile the SONAME might be needed for something else but
      loading.  Add it right away.  */
-  if (__glibc_unlikely (GLRO(dl_profile) != NULL)
-      && l->l_info[DT_SONAME] != NULL)
+  if (l->l_info[DT_SONAME] != NULL) {
     add_name_to_object (l, ((const char *) D_PTR (l, l_info[DT_STRTAB])
 			    + l->l_info[DT_SONAME]->d_un.d_val));
+    l->l_soname_added = 1;
+  }
 
   /* If we have newly loaded libc.so, update the namespace
      description.  */
