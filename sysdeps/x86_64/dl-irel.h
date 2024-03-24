@@ -24,6 +24,7 @@
 #include <unistd.h>
 
 #define ELF_MACHINE_IRELA	1
+#define ELF_MACHINE_CREL_IREL	1
 
 static inline ElfW(Addr)
 __attribute ((always_inline))
@@ -46,6 +47,39 @@ elf_irela (const ElfW(Rela) *reloc)
     }
   else
     __libc_fatal ("Unexpected reloc type in static binary.\n");
+}
+
+static inline void
+__attribute ((always_inline))
+elf_crel_irel (ElfW(Addr) *reloc_addr)
+{
+  *reloc_addr = elf_ifunc_invoke (*reloc_addr);
+}
+
+static inline size_t
+read_leb128 (const unsigned char **buf, size_t sleb_uleb)
+{
+  size_t acc = 0, shift = 0, byte;
+  do
+    {
+      byte = *(*buf)++;
+      acc += (byte - 128 * (byte >= sleb_uleb)) << shift;
+      shift += 7;
+    }
+  while (byte >= 128);
+  return acc;
+}
+
+static inline size_t
+read_uleb128 (const unsigned char **buf)
+{
+  return read_leb128 (buf, 128);
+}
+
+static inline size_t
+read_sleb128 (const unsigned char **buf)
+{
+  return read_leb128 (buf, 64);
 }
 
 #endif /* dl-irel.h */

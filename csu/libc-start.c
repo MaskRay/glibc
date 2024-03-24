@@ -85,6 +85,24 @@ apply_irel (void)
   for (const IREL_T *ipltent = IPLT_START; ipltent < IPLT_END; ++ipltent)
     IREL (ipltent);
 # endif
+# ifdef ELF_MACHINE_CREL_IREL
+  extern const uint8_t __crel_iplt_start[] __attribute__ ((weak));
+  extern const uint8_t __crel_iplt_end[] __attribute__ ((weak));
+  if (&__crel_iplt_start != &__crel_iplt_end) {
+    size_t offset = 0;
+    const uint8_t *p = __crel_iplt_start;
+    size_t count = read_uleb128 (&p), shift = count & 3;
+    for (count >>= 3; count; count--) {
+      uint8_t rel_head = *p++;
+      offset += rel_head >> 2;
+      if (rel_head & 128)
+        offset += (read_uleb128 (&p) << 5) - 32;
+      if (rel_head & 2)
+        read_sleb128 (&p);
+      elf_crel_irel ((ElfW (Addr) *) (offset << shift));
+    }
+  }
+#endif
 }
 #endif
 
